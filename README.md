@@ -1,1 +1,1 @@
-# EasyInventoy.API
+# Easy Inventory - API
