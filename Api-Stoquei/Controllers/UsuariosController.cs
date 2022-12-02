@@ -4,7 +4,7 @@ using Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace Api_Easy_Inventory.Controllers
+namespace Api_Stoquei.Controllers
 {
     [ApiController]
     [Route("[controller]")]

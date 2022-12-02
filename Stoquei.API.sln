@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{01DCD1B7-0516-429C-859E-3493234B3CF8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api-Stoquei", "Api-Easy-Inventory\Api-Stoquei.csproj", "{1081AA30-CA43-4D3C-B5D4-763723F8DC80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api-Stoquei", "Api-Stoquei\Api-Stoquei.csproj", "{1081AA30-CA43-4D3C-B5D4-763723F8DC80}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{A301EAA0-094D-4089-9A08-8084147B2D3E}"
 EndProject
