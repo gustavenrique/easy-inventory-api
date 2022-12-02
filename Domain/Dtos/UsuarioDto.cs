@@ -6,15 +6,17 @@
         public string Usuario { get; set; }
         public string Senha { get; set; }
         public bool Ativo { get; set; }
-        public int CargoId { get; set; }
+        public bool Admin { get; set; }
+        public string Acessos { get; set; }
 
-        public UsuarioDto(int id, string usuario, string senha, bool ativo, int cargoId)
+        public UsuarioDto(int id, string usuario, string senha, bool ativo, bool admin, string acessos)
         {
             Id = id;
             Usuario = usuario;
             Senha = criptografarSenha(senha);
             Ativo = ativo;
-            CargoId = cargoId;
+            Admin = admin;
+            Acessos = acessos; // List<string>
         }
 
         public UsuarioDto(int id, string usuario)
@@ -29,6 +31,6 @@
             : BitConverter
                 .ToString(new System.Security.Cryptography.SHA256Managed()
                 .ComputeHash(System.Text.Encoding.UTF8.GetBytes(senha)))
-                .Replace("-", string.Empty);
+                .Replace("-", string.Empty).ToLower();
     }
 }

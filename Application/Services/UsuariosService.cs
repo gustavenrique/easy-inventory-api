@@ -60,10 +60,9 @@ namespace Application.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(usuario.Usuario) || string.IsNullOrEmpty(usuario.Senha) || usuario.CargoId < 1)
+                if (string.IsNullOrEmpty(usuario.Usuario) || string.IsNullOrEmpty(usuario.Senha))
                     return new MensagemBase<bool>(StatusCodes.Status400BadRequest, "Há campos a serem preenchidos.");
 
-                usuario.Senha = usuario.criptografarSenha(usuario.Senha);
                 var resultado = await _repository.CriarUsuario(usuario);
 
                 if (!resultado)
@@ -96,9 +95,9 @@ namespace Application.Services
                 var usuarioBanco = await _repository.BuscarUsuario(usuarioRequest.Usuario, 0);
 
                 if (usuarioBanco == null)
-                    return new MensagemBase<bool>(StatusCodes.Status400BadRequest, "Usuário inexistente.");
+                    return new MensagemBase<bool>(StatusCodes.Status404NotFound, "Usuário inexistente.");
 
-                if (usuarioBanco.Senha != usuarioRequest.Senha.ToUpper())
+                if (usuarioBanco.Senha != usuarioRequest.Senha)
                     return new MensagemBase<bool>(StatusCodes.Status400BadRequest, "Senha incorreta.");
 
                 return new MensagemBase<bool>

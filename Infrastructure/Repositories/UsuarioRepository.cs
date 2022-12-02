@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<UsuarioDto>> BuscarUsuarios()
         {
-            var query = @"SELECT ID, Usuario, Senha, Ativo, CargoID FROM Usuario WITH(NOLOCK)";
+            var query = @"SELECT ID, Usuario, Senha, Ativo, Admin, Acessos FROM Usuario WITH(NOLOCK)";
 
             return await QueryAsync<UsuarioDto>(query, commandType: CommandType.Text);
         }
@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
             parameters.Add("@Usuario", username, DbType.String);
             parameters.Add("@UsuarioID", usuarioId, DbType.Int32);
 
-            var query = @"SELECT ID, Usuario, Senha, Ativo, CargoID 
+            var query = @"SELECT ID, Usuario, Senha, Ativo, Admin, Acessos 
                           FROM Usuario WITH(NOLOCK)
                           WHERE Usuario = @Usuario OR ID = @UsuarioID";
 
@@ -41,10 +41,11 @@ namespace Infrastructure.Repositories
             parameters.Add("@Usuario", usuario.Usuario, DbType.String);
             parameters.Add("@Senha", usuario.Senha, DbType.String);
             parameters.Add("@Ativo", usuario.Ativo, DbType.Boolean);
-            parameters.Add("@CargoID", usuario.CargoId, DbType.Int32);
+            parameters.Add("@Admin", usuario.Admin, DbType.Boolean);
+            parameters.Add("@Acessos", usuario.Acessos, DbType.String);
 
-            var query = @"INSERT INTO Usuario (Usuario, Senha, Ativo, CargoID)
-                          VALUES (@Usuario, @Senha, @Ativo, @CargoID)";
+            var query = @"INSERT INTO Usuario (Usuario, Senha, Ativo, Admin, Acessos)
+                          VALUES (@Usuario, @Senha, @Ativo, @Admin, @Acessos)";
 
             return (await ExecuteAsync(query, parameters, CommandType.Text) > 0);
         }

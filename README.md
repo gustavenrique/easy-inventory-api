@@ -1,3 +1,3 @@
-# Easy Inventory - API
+# Stoquei - API
 
-Used for helping the [front-end](https://github.com/gustavenrique/easy-inventory) part
+Integrated with the [front-end](https://github.com/gustavenrique/stoquei)

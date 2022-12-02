@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{01DCD1B7-0516-429C-859E-3493234B3CF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api-Easy-Inventory", "Api-Easy-Inventory\Api-Easy-Inventory.csproj", "{1081AA30-CA43-4D3C-B5D4-763723F8DC80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api-Stoquei", "Api-Easy-Inventory\Api-Stoquei.csproj", "{1081AA30-CA43-4D3C-B5D4-763723F8DC80}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{A301EAA0-094D-4089-9A08-8084147B2D3E}"
 EndProject
@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{31D927
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{DFE512B1-E2E2-48AE-BFFA-47A40CA1BCAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{AD6806AA-695C-438B-8C49-5D73697F75F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{AD6806AA-695C-438B-8C49-5D73697F75F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{9BF0F26A-3002-4892-B51F-EAC00A9B1FBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{9BF0F26A-3002-4892-B51F-EAC00A9B1FBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{0B43B241-0880-4FFC-8F1C-F2CDE59C5292}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{0B43B241-0880-4FFC-8F1C-F2CDE59C5292}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

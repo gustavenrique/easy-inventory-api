@@ -68,17 +68,17 @@ namespace Api_Easy_Inventory.Controllers
         }
 
         [HttpPost]
-        [Route("LogarUsuario")]
+        [Route("Login")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensagemBase<bool>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> LogarUsuario([FromBody] LoginViewModel usuario)
+        public async Task<IActionResult> Login([FromBody] LoginViewModel usuario)
         {
-            _logger.LogInformation($"Usuarios - LogarUsuario - Início");
+            _logger.LogInformation($"Usuarios - Login - Início");
 
             MensagemBase<bool> retorno = await _service.LogarUsuario(usuario);
 
-            _logger.LogInformation($"Usuarios - LogarUsuario - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+            _logger.LogInformation($"Usuarios - Login - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 
             return StatusCode(retorno.StatusCode, retorno);
         }

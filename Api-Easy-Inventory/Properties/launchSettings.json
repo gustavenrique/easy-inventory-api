@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Api_Easy_Inventory": {
+    "Api_Stoquei": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

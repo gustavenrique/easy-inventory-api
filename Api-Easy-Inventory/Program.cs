@@ -23,7 +23,9 @@ services.AddCors(options =>
 
 // Dependency Injection
 services.AddSingleton<IUsuariosService, UsuariosService>();
-services.AddSingleton<IUsuarioRepository, UsuarioRepository>(x => new UsuarioRepository(configuration["ConnectionStrings:DB_EasyInventory"]));
+services.AddSingleton<IUsuarioRepository, UsuarioRepository>(x => new UsuarioRepository(configuration["ConnectionStrings:DB_Stoquei"]));
+services.AddSingleton<IProdutoService, ProdutoService>();
+services.AddSingleton<IProdutoRepository, ProdutoRepository>(x => new ProdutoRepository(configuration["ConnectionStrings:DB_Stoquei"]));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

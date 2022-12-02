@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Api_Easy_Inventory</RootNamespace>
+    <RootNamespace>Api.Stoquei</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
