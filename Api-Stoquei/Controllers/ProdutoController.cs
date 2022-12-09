@@ -12,8 +12,6 @@ namespace Api_Stoquei.Controllers
     {
         private readonly ILogger<ProdutoController> _logger;
         private readonly IProdutoService _service;
-
-
         public ProdutoController(ILogger<ProdutoController> logger, IProdutoService service)
         {
             _logger = logger;
@@ -21,7 +19,7 @@ namespace Api_Stoquei.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensagemBase<ProdutosCategoriasDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensagemBase<ProdutoSimplificadoDto>))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
@@ -46,6 +44,39 @@ namespace Api_Stoquei.Controllers
             var retorno = await _service.CriarProduto(produto);
 
             _logger.LogInformation($"Produto - Post - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+
+            return StatusCode(retorno.StatusCode, retorno);
+        }
+
+        [Route("{produtoId}")]
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete([FromRoute] int produtoId)
+        {
+            _logger.LogInformation($"Produto - Delete - Início");
+
+            var retorno = await _service.DeletarProduto(produtoId);
+
+            _logger.LogInformation($"Produto - Delete - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+
+            return StatusCode(retorno.StatusCode, retorno);
+        }
+
+        [Route("")]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put([FromBody] ProdutoDto produto)
+        {
+            _logger.LogInformation($"Produto - Put - Início");
+
+            var retorno = await _service.AtualizarProduto(produto);
+
+            _logger.LogInformation($"Produto - Put - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 
             return StatusCode(retorno.StatusCode, retorno);
         }

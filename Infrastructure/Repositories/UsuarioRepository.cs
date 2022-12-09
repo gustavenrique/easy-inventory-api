@@ -1,12 +1,7 @@
 ﻿using Dapper;
 using Domain.Dtos;
 using Infrastructure.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -16,7 +11,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<UsuarioDto>> BuscarUsuarios()
         {
-            var query = @"SELECT ID, Usuario, Senha, Ativo, Admin, Acessos FROM Usuario WITH(NOLOCK)";
+            var query = @"SELECT ID, Usuario, Senha, Ativo, Admin FROM Usuario WITH(NOLOCK)";
 
             return await QueryAsync<UsuarioDto>(query, commandType: CommandType.Text);
         }
@@ -27,7 +22,7 @@ namespace Infrastructure.Repositories
             parameters.Add("@Usuario", username, DbType.String);
             parameters.Add("@UsuarioID", usuarioId, DbType.Int32);
 
-            var query = @"SELECT ID, Usuario, Senha, Ativo, Admin, Acessos 
+            var query = @"SELECT ID, Usuario, Senha, Ativo, Admin 
                           FROM Usuario WITH(NOLOCK)
                           WHERE Usuario = @Usuario OR ID = @UsuarioID";
 
@@ -42,10 +37,9 @@ namespace Infrastructure.Repositories
             parameters.Add("@Senha", usuario.Senha, DbType.String);
             parameters.Add("@Ativo", usuario.Ativo, DbType.Boolean);
             parameters.Add("@Admin", usuario.Admin, DbType.Boolean);
-            parameters.Add("@Acessos", usuario.Acessos, DbType.String);
 
-            var query = @"INSERT INTO Usuario (Usuario, Senha, Ativo, Admin, Acessos)
-                          VALUES (@Usuario, @Senha, @Ativo, @Admin, @Acessos)";
+            var query = @"INSERT INTO Usuario (Usuario, Senha, Ativo, Admin)
+                          VALUES (@Usuario, @Senha, @Ativo, @Admin)";
 
             return (await ExecuteAsync(query, parameters, CommandType.Text) > 0);
         }

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Dtos
 {
-    public class ProdutosCategoriasDto
+    public class ProdutoSimplificadoDto
     {
         public List<ProdutoDto> Produtos { get; set; }
         public List<CategoriaDto> Categorias { get; set; }
+        public List<FornecedorDto> Fornecedores { get; set; }
     }
 }

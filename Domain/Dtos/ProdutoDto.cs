@@ -15,5 +15,6 @@ namespace Domain.Dtos
         public string Fabricante { get; set; }
         public int CategoriaId { get; set; }
         public int Quantia { get; set; }
+        public List<int> Fornecedores { get; set; } // id dos fornecedores
     }
 }

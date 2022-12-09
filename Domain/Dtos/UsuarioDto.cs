@@ -7,16 +7,14 @@
         public string Senha { get; set; }
         public bool Ativo { get; set; }
         public bool Admin { get; set; }
-        public string Acessos { get; set; }
 
-        public UsuarioDto(int id, string usuario, string senha, bool ativo, bool admin, string acessos)
+        public UsuarioDto(int id, string usuario, string senha, bool ativo, bool admin)
         {
             Id = id;
             Usuario = usuario;
             Senha = criptografarSenha(senha);
             Ativo = ativo;
             Admin = admin;
-            Acessos = acessos; // List<string>
         }
 
         public UsuarioDto(int id, string usuario)
