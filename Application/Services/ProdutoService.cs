@@ -122,12 +122,6 @@ namespace Application.Services
             return !firstNotSecond.Any() && !secondNotFirst.Any();
         }
 
-        public async Task<MensagemBase<ProdutoDto>> BuscarProduto(int produtoId)
-        {
-            throw new NotImplementedException();
-        }
-
-
         public async Task<MensagemBase<bool>> DeletarProduto(int produtoId)
         {
             try

@@ -1,9 +1,4 @@
 ﻿using Domain.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Interfaces
 {
@@ -11,5 +6,8 @@ namespace Infrastructure.Interfaces
     {
         Task<List<FornecedorDto>> BuscarFornecedores();
         Task<int> CriarFornecedor(FornecedorDto fornecedor);
+        Task<FornecedorDto> BuscarFornecedor(int fornecedorId);
+        Task<bool> DeletarFornecedor(int fornecedorId);
+        Task<bool> AtualizarFornecedor(FornecedorDto fornecedor);
     }
 }

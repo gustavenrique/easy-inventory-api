@@ -71,5 +71,50 @@ namespace Application.Services
                 return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao criar o fornecedor. Fornecedor: {fornecedor}");
             }
         }
+
+        public async Task<MensagemBase<bool>> DeletarFornecedor(int fornecedorId)
+        {
+            try
+            {
+                var fornecedor = await _repository.BuscarFornecedor(fornecedorId);
+
+                if (fornecedor == null)
+                    return new MensagemBase<bool>(StatusCodes.Status404NotFound, "Não é possível deletar um fornecedor inexistente.", false);
+
+                var resultado = await _repository.DeletarFornecedor(fornecedorId);
+
+                return new MensagemBase<bool>(StatusCodes.Status204NoContent, "Fornecedor deletado com sucesso!", true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Fornecedor - DeletarFornecedor - Erro ao tentar deletar o fornecedor com Id: {fornecedorId}. Exception: {ex}");
+                return new MensagemBase<bool>(StatusCodes.Status500InternalServerError, $"Erro ao deletar o fornecedor.");
+            }
+        }
+
+        public async Task<MensagemBase<bool>> AtualizarFornecedor(FornecedorDto fornecedor)
+        {
+            try
+            {
+                var fornecedorDto = await _repository.BuscarFornecedor(fornecedor.Id);
+
+                if (fornecedorDto == null)
+                    return new MensagemBase<bool>(StatusCodes.Status404NotFound, "Não é possível alterar um fornecedor inexistente.", false);
+
+                var houveAlteracao = fornecedor.Nome != fornecedorDto.Nome || fornecedor.Email != fornecedorDto.Email || fornecedor.Telefone != fornecedorDto.Telefone;
+
+                if (!houveAlteracao)
+                    return new MensagemBase<bool>(StatusCodes.Status400BadRequest, "Nenhuma propriedade foi alterada.", false);
+
+                var sucesso = await _repository.AtualizarFornecedor(fornecedor);
+
+                return new MensagemBase<bool>(StatusCodes.Status204NoContent, "Fornecedor atualizado com sucesso!", sucesso);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Fornecedor - AtualizarFornecedor - Erro ao tentar atualizar o fornecedor. Fornecedor: {fornecedor}. Exception: {ex}");
+                return new MensagemBase<bool>(StatusCodes.Status500InternalServerError, $"Ocorreu um erro inesperado ao atualizar o fornecedor.", false);
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Dtos;
 using Domain.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -46,6 +45,39 @@ namespace Api.Stoquei.Controllers
             var retorno = await _service.CriarFornecedor(fornecedor);
 
             _logger.LogInformation($"Fornecedor - Post - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+
+            return StatusCode(retorno.StatusCode, retorno);
+        }
+
+        [Route("{fornecedorId}")]
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete([FromRoute] int fornecedorId)
+        {
+            _logger.LogInformation($"Fornecedor - Delete - Início");
+
+            var retorno = await _service.DeletarFornecedor(fornecedorId);
+
+            _logger.LogInformation($"Fornecedor - Delete - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+
+            return StatusCode(retorno.StatusCode, retorno);
+        }
+
+        [Route("")]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put([FromBody] FornecedorDto produto)
+        {
+            _logger.LogInformation($"Fornecedor - Put - Início");
+
+            var retorno = await _service.AtualizarFornecedor(produto);
+
+            _logger.LogInformation($"Fornecedor - Put - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 
             return StatusCode(retorno.StatusCode, retorno);
         }
