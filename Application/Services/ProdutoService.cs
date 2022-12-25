@@ -36,12 +36,16 @@ namespace Application.Services
             }
         }
 
-        public async Task<MensagemBase<bool>> CriarProduto(ProdutoDto produto)
+        public async Task<MensagemBase<int>> CriarProduto(ProdutoDto produto)
         {
             try
             {
                 if (string.IsNullOrEmpty(produto.Nome) || string.IsNullOrEmpty(produto.CodigoEan) || produto.Preco <= 0)
-                    return new MensagemBase<bool>(StatusCodes.Status400BadRequest, "Há campos a serem preenchidos.");
+                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Há campos a serem preenchidos.");
+
+                var produtoExistente = await _repository.BuscarPorCodigoEan(produto.CodigoEan);
+                if (produtoExistente != null)
+                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, $"O código EAN '{produto.CodigoEan}' já está em uso");
 
                 bool resultado;
                 using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -59,20 +63,20 @@ namespace Application.Services
                 if (!resultado)
                 {
                     _logger.LogError($"Produto - Post - Erro ao tentar criar produto. Produto: {produto}");
-                    return new MensagemBase<bool>(StatusCodes.Status400BadRequest, "Ocorreu um erro ao tentar registrar o produto.");
+                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Ocorreu um erro ao tentar registrar o produto.");
                 }
 
-                return new MensagemBase<bool>
+                return new MensagemBase<int>
                 {
                     StatusCode = StatusCodes.Status201Created,
                     Message = "Produto criado com sucesso!",
-                    Object = resultado
+                    Object = produto.Id
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Produto - BuscarTodos - Erro ao tentar buscar os produtos. Exception: {ex}");
-                return new MensagemBase<bool>(StatusCodes.Status500InternalServerError, $"Erro ao criar o produto. Produto: {produto}", false);
+                _logger.LogError(ex, $"Produto - Post - Erro ao tentar buscar os produtos. Exception: {ex}");
+                return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao criar o produto. Produto: {produto}");
             }
         }
         

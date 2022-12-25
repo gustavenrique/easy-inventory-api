@@ -9,13 +9,6 @@ namespace Infrastructure.Repositories
     {
         public ProdutoRepository(string connectionString) : base(connectionString) { }
 
-        public async Task<List<ProdutoDto>> BuscarProdutos()
-        {
-            var query = @"SELECT Id, Nome, CodigoEan, Preco, Fabricante, CategoriaId, EmEstoque AS Quantia FROM Produto WITH(NOLOCK)";
-
-            return await QueryAsync<ProdutoDto>(query, commandType: CommandType.Text);
-        }
-
         public async Task<ProdutoSimplificadoDto> BuscarProdutosCompletos()
         {
             var query = @"SELECT Id, Nome, CodigoEan, Preco, Fabricante, CategoriaId, EmEstoque AS Quantia FROM Produto WITH(NOLOCK)
@@ -63,6 +56,16 @@ namespace Infrastructure.Repositories
                     return produto;
                 },
                 param: parameters);
+        }
+
+        public async Task<ProdutoDto> BuscarPorCodigoEan(string codigoEan)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@CodigoEan", codigoEan, DbType.Int32);
+
+            var query = @"SELECT Id, Nome, CodigoEan, Preco, Fabricante, CategoriaId, EmEstoque AS Quantia FROM Produto WITH(NOLOCK) WHERE CodigoEan = @CodigoEan";
+
+            return await QueryFirstOrDefaultAsync<ProdutoDto>(query, param: parameters, commandType: CommandType.Text);
         }
 
         public async Task<int> CriarProduto(ProdutoDto produto)

@@ -34,8 +34,8 @@ namespace Api_Stoquei.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MensagemBase<bool>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MensagemBase<int>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<int>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] ProdutoDto produto)
         {

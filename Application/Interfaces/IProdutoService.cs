@@ -7,7 +7,7 @@ namespace Application.Interfaces
     {
         Task<MensagemBase<ProdutoSimplificadoDto>> BuscarTodos();
         Task<MensagemBase<ProdutoDto>> BuscarProduto(int produtoId);
-        Task<MensagemBase<bool>> CriarProduto(ProdutoDto produto);
+        Task<MensagemBase<int>> CriarProduto(ProdutoDto produto);
         Task<MensagemBase<bool>> AtualizarProduto(ProdutoDto produto);
         Task<MensagemBase<bool>> DeletarProduto(int produtoId);
     }

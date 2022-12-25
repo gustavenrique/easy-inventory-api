@@ -4,7 +4,7 @@ namespace Infrastructure.Interfaces
 {
     public interface IProdutoRepository
     {
-        Task<List<ProdutoDto>> BuscarProdutos();
+        Task<ProdutoDto> BuscarPorCodigoEan(string codigoEan);
         Task<ProdutoSimplificadoDto> BuscarProdutosCompletos();
         Task<ProdutoDto> BuscarProduto(int produtoId);
         Task<int> CriarProduto(ProdutoDto produto);
@@ -12,6 +12,5 @@ namespace Infrastructure.Interfaces
         Task<bool> AtualizarProduto(ProdutoDto produto);
         Task<bool> CriarProdutoFornecedor(ProdutoDto produto);
         Task<bool> DeletarProdutoFornecedor(int produtoId);
-
     }
 }
