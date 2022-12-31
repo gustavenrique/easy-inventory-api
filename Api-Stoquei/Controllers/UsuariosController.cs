@@ -28,7 +28,7 @@ namespace Api_Stoquei.Controllers
         {
             _logger.LogInformation($"Usuarios - Get All - Início");
 
-            MensagemBase<List<UsuarioDto>> retorno = await _service.BuscarTodos();
+            MensagemBase<UsuarioSimplificadoDto> retorno = await _service.BuscarTodos();
 
             _logger.LogInformation($"Usuarios - Get All - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 
@@ -54,13 +54,13 @@ namespace Api_Stoquei.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MensagemBase<List<UsuarioDto>>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<int>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post(UsuarioDto usuario)
+        public async Task<IActionResult> Post(UsuarioCriacaoViewModel usuario)
         {
             _logger.LogInformation($"Usuarios - Post - Início");
 
-            MensagemBase<bool> retorno = await _service.CriarUsuario(usuario);
+            MensagemBase<int> retorno = await _service.CriarUsuario(usuario);
 
             _logger.LogInformation($"Usuarios - Post - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 
@@ -69,14 +69,14 @@ namespace Api_Stoquei.Controllers
 
         [HttpPost]
         [Route("Login")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensagemBase<bool>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensagemBase<int>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<int>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginViewModel usuario)
         {
             _logger.LogInformation($"Usuarios - Login - Início");
 
-            MensagemBase<bool> retorno = await _service.LogarUsuario(usuario);
+            MensagemBase<int> retorno = await _service.LogarUsuario(usuario);
 
             _logger.LogInformation($"Usuarios - Login - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 

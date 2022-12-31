@@ -4,8 +4,11 @@ namespace Infrastructure.Interfaces
 {
     public interface IUsuarioRepository
     {
-        Task<List<UsuarioDto>> BuscarUsuarios();
         Task<UsuarioDto> BuscarUsuario(string username, int usuarioId);
-        Task<bool> CriarUsuario(UsuarioDto usuario);
+        Task<UsuarioSimplificadoDto> BuscaSimplificada();
+        Task<int> CriarUsuario(UsuarioDto usuario);
+        Task<List<AcessoDto>> BuscarAcessos();  
+        Task<bool> CriarUsuarioAcesso(UsuarioDto usuario);
+        Task<bool> DeletarUsuarioAcesso(int usuarioId);
     }
 }
