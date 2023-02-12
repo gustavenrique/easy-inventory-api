@@ -1,4 +1,5 @@
 ﻿using Domain.Dtos;
+using Domain.ViewModels;
 
 namespace Infrastructure.Interfaces
 {
@@ -10,5 +11,6 @@ namespace Infrastructure.Interfaces
         Task<List<AcessoDto>> BuscarAcessos();  
         Task<bool> CriarUsuarioAcesso(UsuarioDto usuario);
         Task<bool> DeletarUsuarioAcesso(int usuarioId);
+        Task<bool> AlterarSenha(AlteracaoSenhaViewModel usuario);
     }
 }

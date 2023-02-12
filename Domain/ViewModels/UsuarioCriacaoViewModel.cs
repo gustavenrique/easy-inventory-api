@@ -1,4 +1,5 @@
 ﻿using Domain.Dtos;
+using Domain.Enums;
 
 namespace Domain.ViewModels
 {
@@ -8,11 +9,8 @@ namespace Domain.ViewModels
         public string Email { get; set; }
         public bool Ativo { get; set; }
         public bool Admin { get; set; }
-        public List<int> Acessos { get; set; }
+        public List<Acesso> Acessos { get; set; }
 
-        public UsuarioDto ParaDto()
-        {
-            return new UsuarioDto(Usuario, Email, Ativo, Admin, Acessos);
-        }
+        public UsuarioDto ParaDto() => new UsuarioDto(Usuario, Email, Ativo, Admin, Acessos);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using Domain.Dtos;
+using Domain.Enums;
+using Domain.ViewModels;
 using Infrastructure.Interfaces;
 using System.Data;
 
@@ -26,10 +28,10 @@ namespace Infrastructure.Repositories
 
                     retorno.Usuarios.ForEach(async u =>
                     {
-                        u.Acessos = new List<int>();
+                        u.Acessos = new List<Acesso>();
                         usuarioAcessos.ForEach(ua =>
                         {
-                            if (ua.UsuarioId == u.Id) u.Acessos.Add(ua.AcessoId);
+                            if (ua.UsuarioId == u.Id) u.Acessos.Add((Acesso)ua.AcessoId);
                         });
                     });
 
@@ -66,13 +68,26 @@ namespace Infrastructure.Repositories
             return await QueryFirstOrDefaultAsync<int>(query, parameters, CommandType.Text);
         }
 
+        public async Task<bool> AlterarSenha(AlteracaoSenhaViewModel usuario)
+        {
+            var usuarioDto = new UsuarioDto();
+            usuarioDto.Senha = usuario.SenhaNova;
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@NovaSenha", usuarioDto.SenhaCriptografada(), DbType.String);
+            parameters.Add("@UsuarioId", usuario.UsuarioId, DbType.Int32);
+
+            var query = "UPDATE Usuario SET Senha = @NovaSenha WHERE ID = @UsuarioId";
+
+            return await ExecuteAsync(query, parameters, CommandType.Text) > 0;
+        }
+
         #region Acesso e Usuario_Acesso
         public async Task<List<AcessoDto>> BuscarAcessos()
         {
             var query = @"SELECT Id, Nome FROM Acesso";
 
             return await QueryAsync<AcessoDto>(query, commandType: CommandType.Text);
-
         }
 
         public async Task<bool> CriarUsuarioAcesso(UsuarioDto usuario)

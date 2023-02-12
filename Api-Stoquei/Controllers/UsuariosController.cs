@@ -13,7 +13,6 @@ namespace Api_Stoquei.Controllers
         private readonly ILogger<UsuariosController> _logger;
         private readonly IUsuariosService _service;
 
-
         public UsuariosController(ILogger<UsuariosController> logger, IUsuariosService service)
         {
             _logger = logger;
@@ -71,6 +70,7 @@ namespace Api_Stoquei.Controllers
         [Route("Login")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensagemBase<int>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<int>))]
+        [ProducesResponseType(StatusCodes.Status412PreconditionFailed, Type = typeof(MensagemBase<int>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginViewModel usuario)
         {
@@ -79,6 +79,22 @@ namespace Api_Stoquei.Controllers
             MensagemBase<int> retorno = await _service.LogarUsuario(usuario);
 
             _logger.LogInformation($"Usuarios - Login - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+
+            return StatusCode(retorno.StatusCode, retorno);
+        }
+
+        [HttpPatch]
+        [Route("AlterarSenha")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensagemBase<int>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<int>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AlterarSenha([FromBody] AlteracaoSenhaViewModel model)
+        {
+            _logger.LogInformation($"Usuarios - AlterarSenha - Início");
+
+            MensagemBase<int> retorno = await _service.AlterarSenha(model);
+
+            _logger.LogInformation($"Usuarios - AlterarSenha - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 
             return StatusCode(retorno.StatusCode, retorno);
         }

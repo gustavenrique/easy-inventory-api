@@ -1,10 +1,13 @@
 ﻿using Application.Interfaces;
 using Domain.Dtos;
+using Domain.Enums;
 using Domain.ViewModels;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text;
+using System.Net;
+using System.Net.Mail;
 using System.Transactions;
 
 namespace Application.Services
@@ -13,11 +16,13 @@ namespace Application.Services
     {
         private readonly IUsuarioRepository _repository;
         private readonly ILogger<UsuariosService> _logger;
+        private readonly IConfiguration _configuration;
 
-        public UsuariosService(IUsuarioRepository repository, ILogger<UsuariosService> logger)
+        public UsuariosService(IUsuarioRepository repository, ILogger<UsuariosService> logger, IConfiguration configuration)
         {
             _repository = repository;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<MensagemBase<UsuarioSimplificadoDto>> BuscarTodos()
@@ -52,7 +57,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Usuarios - BuscarTodos - Erro ao tentar buscar os usuários. Exception: {ex}");
+                _logger.LogError(ex, $"Usuarios - BuscarUsuario - Erro ao tentar buscar o usuário. Exception: {ex}");
                 return new MensagemBase<UsuarioDto>(StatusCodes.Status500InternalServerError, $"Erro ao buscar o usuário. UsuarioID: {usuarioId}");
             }
         }
@@ -66,10 +71,22 @@ namespace Application.Services
                 if (string.IsNullOrEmpty(usuarioDto.Usuario) || string.IsNullOrEmpty(usuarioDto.Email))
                     return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Há campos a serem preenchidos.");
 
+                var buscaSimplificada = await _repository.BuscaSimplificada();
+
+                if (buscaSimplificada.Usuarios.Any(u => u.Usuario == usuarioRequest.Usuario))
+                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, $"O username {usuarioRequest.Usuario} já está em uso");
+
+                if (buscaSimplificada.Usuarios.Any(u => u.Email == usuarioRequest.Email))
+                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, $"O email {usuarioRequest.Email} já está em uso");
+
                 bool resultado = false;
                 using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     var usuarioCriadoId = usuarioDto.Id = await _repository.CriarUsuario(usuarioDto);
+
+                    if (usuarioDto.Admin)
+                        usuarioDto.Acessos = Enum.GetValues(typeof(Acesso)).Cast<Acesso>().ToList();
+
                     var usuarioAcessoSucesso = usuarioDto.Acessos.Any() ? await _repository.CriarUsuarioAcesso(usuarioDto) : true;
 
                     resultado = usuarioCriadoId > 0 && usuarioAcessoSucesso;
@@ -82,8 +99,8 @@ namespace Application.Services
                     _logger.LogError($"Usuarios - Post - Erro ao tentar criar usuário. Usuario: {usuarioRequest}");
                     return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Ocorreu um erro ao tentar registrar o usuário.");
                 }
-                
-                // enviar email com o link, login e senha
+
+                usuarioDto.EnviarEmailComSenha(_configuration["Email:SenderAddress"], _configuration["Email:SenderPassword"]);
 
                 return new MensagemBase<int>
                 {
@@ -114,6 +131,9 @@ namespace Application.Services
                 if (usuarioBanco.Senha != usuarioRequest.Senha)
                     return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Senha incorreta.");
 
+                if (usuarioBanco.AlterarSenha)
+                    return new MensagemBase<int>(StatusCodes.Status412PreconditionFailed, "Senha deve ser alterada.", usuarioBanco.Id);
+
                 return new MensagemBase<int>
                 {
                     StatusCode = StatusCodes.Status200OK,
@@ -123,8 +143,39 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Usuarios - BuscarTodos - Erro ao tentar buscar os usuários. Exception: {ex}");
-                return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao criar o usuário. Usuario: {usuarioRequest}");
+                _logger.LogError(ex, $"Usuarios - LogarUsuario - Erro ao tentar logar o usuário. Exception: {ex}");
+                return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao logar o usuário. Request obj: {usuarioRequest}");
+            }
+        }
+
+        public async Task<MensagemBase<int>> AlterarSenha(AlteracaoSenhaViewModel model)
+        {
+            try
+            {
+                var usuarioBanco = await _repository.BuscarUsuario("", model.UsuarioId);
+
+                if (usuarioBanco == null)
+                    return new MensagemBase<int>(StatusCodes.Status404NotFound, "Usuário inexistente.");
+
+                if (usuarioBanco.Senha != model.SenhaAtual)
+                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Senha incorreta.");
+
+                var sucesso = await _repository.AlterarSenha(model);
+
+                if (!sucesso)
+                    return new MensagemBase<int>(StatusCodes.Status500InternalServerError, "Ocorreu um erro na alteração de senha. Por favor, tente novamente.");
+
+                return new MensagemBase<int>()
+                {
+                    StatusCode = StatusCodes.Status200OK,
+                    Message = "Senha alterada com sucesso!",
+                    Object = usuarioBanco.Id
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Usuarios - AlterarSenha - Erro ao tentar alterar senha. Exception: {ex}");
+                return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao alterar a senha. Model: {model}");
             }
         }
     }
