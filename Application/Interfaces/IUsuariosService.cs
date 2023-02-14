@@ -10,5 +10,7 @@ namespace Application.Interfaces
         Task<MensagemBase<int>> CriarUsuario(UsuarioCriacaoViewModel usuarioRequest);
         Task<MensagemBase<int>> LogarUsuario(LoginViewModel usuario);
         Task<MensagemBase<int>> AlterarSenha(AlteracaoSenhaViewModel model);
+        Task<MensagemBase<bool>> DeletarUsuario(int usuarioId);
+        Task<MensagemBase<bool>> AtualizarUsuario(UsuarioAlteracaoViewModel usuario);
     }
 }

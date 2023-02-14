@@ -99,5 +99,38 @@ namespace Api_Stoquei.Controllers
             return StatusCode(retorno.StatusCode, retorno);
         }
 
+        [Route("{usuarioId}")]
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete([FromRoute] int usuarioId)
+        {
+            _logger.LogInformation($"Usuarios - Delete - Início");
+
+            var retorno = await _service.DeletarUsuario(usuarioId);
+
+            _logger.LogInformation($"Usuarios - Delete - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+
+            return StatusCode(retorno.StatusCode, retorno);
+        }
+
+        [Route("")]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put([FromBody] UsuarioAlteracaoViewModel usuario)
+        {
+            _logger.LogInformation($"Usuarios - Put - Início");
+
+            var retorno = await _service.AtualizarUsuario(usuario);
+
+            _logger.LogInformation($"Usuarios - Put - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
+
+            return StatusCode(retorno.StatusCode, retorno);
+        }
+
     }
 }

@@ -178,5 +178,69 @@ namespace Application.Services
                 return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao alterar a senha. Model: {model}");
             }
         }
+
+        public async Task<MensagemBase<bool>> DeletarUsuario(int usuarioId)
+        {
+            try
+            {
+                var usuario = await _repository.BuscarUsuario("", usuarioId);
+
+                if (usuario == null)
+                    return new MensagemBase<bool>(StatusCodes.Status404NotFound, "Não é possível deletar um usuário inexistente.", false);
+
+                var resultado = await _repository.DeletarUsuario(usuarioId);
+
+                return new MensagemBase<bool>(StatusCodes.Status204NoContent, "Usuário deletado com sucesso!", true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Usuario - DeletarUsuario - Erro ao tentar deletar o usuário com Id: {usuarioId}. Exception: {ex}");
+                return new MensagemBase<bool>(StatusCodes.Status500InternalServerError, $"Erro ao deletar o usuário.");
+            }
+        }
+
+        public async Task<MensagemBase<bool>> AtualizarUsuario(UsuarioAlteracaoViewModel usuario)
+        {
+            try
+            {
+                var usuarioBanco = await _repository.BuscarUsuarioCompleto(usuario.Id);
+
+                if (usuarioBanco == null)
+                    return new MensagemBase<bool>(StatusCodes.Status404NotFound, "Não é possível alterar um usuário inexistente.", false);
+
+                var houveAlteracaoSimples = usuario.Usuario != usuarioBanco.Usuario || usuario.Email != usuarioBanco.Email || usuario.Ativo != usuarioBanco.Ativo || usuario.Admin != usuarioBanco.Admin;
+                bool houveAlteracaoComplexa = !listaAcessoIgual(usuario.Acessos, usuarioBanco.Acessos);
+
+                if (!houveAlteracaoComplexa && !houveAlteracaoSimples)
+                    return new MensagemBase<bool>(StatusCodes.Status400BadRequest, "Nenhuma propriedade foi alterada.", false);
+
+                var sucesso = false;
+                using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    var usuarioDto = usuario.ParaDto();
+
+                    if (houveAlteracaoSimples) sucesso = await _repository.AtualizarUsuario(usuarioDto);
+
+                    if (houveAlteracaoComplexa) sucesso = sucesso && await _repository.DeletarUsuarioAcesso(usuarioDto.Id) && await _repository.CriarUsuarioAcesso(usuarioDto);
+
+                    transaction.Complete();
+                }
+
+                return new MensagemBase<bool>(StatusCodes.Status204NoContent, "Usuário atualizado com sucesso!", sucesso);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Usuario - AtualizarUsuario - Erro ao tentar atualizar o usuário. Usuario: {usuario}. Exception: {ex}");
+                return new MensagemBase<bool>(StatusCodes.Status500InternalServerError, $"Ocorreu um erro inesperado ao atualizar o usuário.", false);
+            }
+        }
+
+        private bool listaAcessoIgual(List<Acesso> list1, List<Acesso> list2)
+        {
+            var firstNotSecond = list1.Except(list2).ToList();
+            var secondNotFirst = list2.Except(list1).ToList();
+
+            return !firstNotSecond.Any() && !secondNotFirst.Any();
+        }
     }
 }

@@ -52,6 +52,29 @@ namespace Infrastructure.Repositories
             return await QueryFirstOrDefaultAsync<UsuarioDto>(query, parameters, CommandType.Text);
         }
 
+        public async Task<UsuarioDto> BuscarUsuarioCompleto(int usuarioId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@UsuarioID", usuarioId, DbType.Int32);
+
+            var query = @"SELECT ID, Usuario, Email, Senha, Ativo, Admin, AlterarSenha, UltimaAlteracaoSenha FROM Usuario WITH(NOLOCK) WHERE ID = @UsuarioID
+                          SELECT UsuarioId, AcessoId FROM Usuario_Acesso WITH(NOLOCK) WHERE UsuarioId = @UsuarioID";
+
+            return await MultipleQueryAsync<UsuarioDto>(query, commandType: CommandType.Text,
+                retornoHandler: async gridRetornado =>
+                {
+                    var usuario = new UsuarioDto();
+
+                    usuario = (await gridRetornado.ReadAsync<UsuarioDto>()).FirstOrDefault();
+                    var usuarioAcessos = (await gridRetornado.ReadAsync<UsuarioAcessoDto>()).ToList();
+
+                    usuario.Acessos = new List<Acesso>();
+                    usuarioAcessos.ForEach(ua => usuario.Acessos.Add((Acesso)ua.AcessoId));
+
+                    return usuario;
+                }, param: parameters);
+        }
+
         public async Task<int> CriarUsuario(UsuarioDto usuario)
         {
             var parameters = new DynamicParameters();
@@ -70,16 +93,37 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> AlterarSenha(AlteracaoSenhaViewModel usuario)
         {
-            var usuarioDto = new UsuarioDto();
-            usuarioDto.Senha = usuario.SenhaNova;
-
             var parameters = new DynamicParameters();
-            parameters.Add("@NovaSenha", usuarioDto.SenhaCriptografada(), DbType.String);
+            parameters.Add("@NovaSenha", usuario.SenhaNova, DbType.String);
             parameters.Add("@UsuarioId", usuario.UsuarioId, DbType.Int32);
 
-            var query = "UPDATE Usuario SET Senha = @NovaSenha WHERE ID = @UsuarioId";
+            var query = "UPDATE Usuario SET Senha = @NovaSenha, UltimaAlteracaoSenha = GETDATE(), AlterarSenha = 0 WHERE ID = @UsuarioId";
 
             return await ExecuteAsync(query, parameters, CommandType.Text) > 0;
+        }
+
+        public async Task<bool> DeletarUsuario(int usuarioId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@UsuarioId", usuarioId, DbType.Int64);
+
+            var query = "DELETE FROM Usuario WHERE Id = @UsuarioId";
+
+            return await ExecuteAsync(query, param: parameters, commandType: CommandType.Text) > 0;
+        }
+
+        public async Task<bool> AtualizarUsuario(UsuarioDto usuario)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", usuario.Id, DbType.Int64);
+            parameters.Add("@Usuario", usuario.Usuario, DbType.String);
+            parameters.Add("@Email", usuario.Email, DbType.String);
+            parameters.Add("@Ativo", usuario.Ativo, DbType.Boolean);
+            parameters.Add("@Admin", usuario.Admin, DbType.Boolean);
+
+            var query = @"UPDATE Usuario SET Usuario = @Usuario, Email = @Email, Ativo = @Ativo, Admin = @Admin WHERE Id = @Id";
+
+            return (await ExecuteAsync(query, commandType: CommandType.Text, param: parameters)) > 0;
         }
 
         #region Acesso e Usuario_Acesso

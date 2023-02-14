@@ -91,8 +91,7 @@ namespace Application.Services
                 return new MensagemBase<bool>(StatusCodes.Status500InternalServerError, $"Erro ao deletar o fornecedor.");
             }
         }
-
-        public async Task<MensagemBase<bool>> AtualizarFornecedor(FornecedorDto fornecedor)
+public async Task<MensagemBase<bool>> AtualizarFornecedor(FornecedorDto fornecedor)
         {
             try
             {
@@ -116,5 +115,6 @@ namespace Application.Services
                 return new MensagemBase<bool>(StatusCodes.Status500InternalServerError, $"Ocorreu um erro inesperado ao atualizar o fornecedor.", false);
             }
         }
+        
     }
 }

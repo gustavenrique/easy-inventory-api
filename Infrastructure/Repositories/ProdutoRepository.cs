@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
                     retorno.Fornecedores = (await gridRetornado.ReadAsync<FornecedorDto>()).ToList();
                     var produtoFornecedores = (await gridRetornado.ReadAsync<ProdutoFornecedorDto>()).ToList();
                     
-                    retorno.Produtos.ForEach(async p =>
+                    retorno.Produtos.ForEach(p =>
                     {
                         p.Fornecedores = new List<int>();
                         produtoFornecedores.ForEach(pf =>

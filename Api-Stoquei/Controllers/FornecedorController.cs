@@ -71,11 +71,11 @@ namespace Api.Stoquei.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(MensagemBase<bool>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(MensagemBase<bool>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put([FromBody] FornecedorDto produto)
+        public async Task<IActionResult> Put([FromBody] FornecedorDto fornecedor)
         {
             _logger.LogInformation($"Fornecedor - Put - Início");
 
-            var retorno = await _service.AtualizarFornecedor(produto);
+            var retorno = await _service.AtualizarFornecedor(fornecedor);
 
             _logger.LogInformation($"Fornecedor - Put - Fim - Retorno: {JsonConvert.SerializeObject(retorno)}");
 
