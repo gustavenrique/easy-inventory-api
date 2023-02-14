@@ -44,6 +44,16 @@ namespace Domain.Dtos
             Acessos = acessos;
         }
 
+        public UsuarioDto(int id, string usuario, string email, bool ativo, bool admin, List<Acesso> acessos)
+        {
+            Id = id;
+            Usuario = usuario;
+            Email = email;
+            Ativo = ativo;
+            Admin = admin;
+            Acessos = acessos;
+        }
+
         public UsuarioDto(int id, string usuario)
         {
             Id = id;

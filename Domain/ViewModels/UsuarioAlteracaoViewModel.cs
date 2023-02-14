@@ -12,6 +12,6 @@ namespace Domain.ViewModels
         public bool Admin { get; set; }
         public List<Acesso> Acessos { get; set; }
 
-        public UsuarioDto ParaDto() => new UsuarioDto(Usuario, Email, Ativo, Admin, Acessos);
+        public UsuarioDto ParaDto() => new UsuarioDto(Id, Usuario, Email, Ativo, Admin, Acessos);
     }
 }
