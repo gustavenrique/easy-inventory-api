@@ -75,6 +75,32 @@ namespace Infrastructure.Repositories
                 }, param: parameters);
         }
 
+        public async Task<UsuarioDto> BuscarUsuarioCompletoPorUsername(string username)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Username", username, DbType.String);
+
+            var query = @"DECLARE @UsuarioID INT;
+                          SELECT @UsuarioID = ID FROM Usuario WITH(NOLOCK) WHERE Usuario = @Username
+
+                          SELECT ID, Usuario, Email, Senha, Ativo, Admin, AlterarSenha, UltimaAlteracaoSenha FROM Usuario WITH(NOLOCK) WHERE ID = @UsuarioID
+                          SELECT UsuarioId, AcessoId FROM Usuario_Acesso WITH(NOLOCK) WHERE UsuarioId = @UsuarioID";
+
+            return await MultipleQueryAsync<UsuarioDto>(query, commandType: CommandType.Text,
+                retornoHandler: async gridRetornado =>
+                {
+                    var usuario = new UsuarioDto();
+
+                    usuario = (await gridRetornado.ReadAsync<UsuarioDto>()).FirstOrDefault();
+                    var usuarioAcessos = (await gridRetornado.ReadAsync<UsuarioAcessoDto>()).ToList();
+
+                    usuario.Acessos = new List<Acesso>();
+                    usuarioAcessos.ForEach(ua => usuario.Acessos.Add((Acesso)ua.AcessoId));
+
+                    return usuario;
+                }, param: parameters);
+        }
+
         public async Task<int> CriarUsuario(UsuarioDto usuario)
         {
             var parameters = new DynamicParameters();

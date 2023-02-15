@@ -6,8 +6,6 @@ using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using System.Net.Mail;
 using System.Transactions;
 
 namespace Application.Services
@@ -116,66 +114,84 @@ namespace Application.Services
             }
         }
 
-        public async Task<MensagemBase<int>> LogarUsuario(LoginViewModel usuarioRequest)
+        public async Task<MensagemBase<LoginResponseViewModel>> LogarUsuario(LoginViewModel usuarioRequest)
         {
             try
             {
                 if (string.IsNullOrEmpty(usuarioRequest.Usuario) || string.IsNullOrEmpty(usuarioRequest.Senha))
-                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Usuário ou senha não foram preenchidos.");
+                    return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status400BadRequest, "Usuário ou senha não foram preenchidos.");
 
-                var usuarioBanco = await _repository.BuscarUsuario(usuarioRequest.Usuario, 0);
+                var usuarioBanco = await _repository.BuscarUsuarioCompletoPorUsername(usuarioRequest.Usuario);
 
-                if (usuarioBanco == null)
-                    return new MensagemBase<int>(StatusCodes.Status404NotFound, "Usuário inexistente.");
+                var validacaoUsuario = ValidacaoUsuario(usuarioBanco, usuarioRequest.Senha);
 
-                if (usuarioBanco.Senha != usuarioRequest.Senha)
-                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Senha incorreta.");
+                if (validacaoUsuario.Object == null) return validacaoUsuario;
 
                 if (usuarioBanco.AlterarSenha)
-                    return new MensagemBase<int>(StatusCodes.Status412PreconditionFailed, "Senha deve ser alterada.", usuarioBanco.Id);
+                    return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status412PreconditionFailed, "Senha deve ser alterada.", new LoginResponseViewModel() { UsuarioId = usuarioBanco.Id });
 
-                return new MensagemBase<int>
+                return new MensagemBase<LoginResponseViewModel>
                 {
                     StatusCode = StatusCodes.Status200OK,
                     Message = "Login realizado com sucesso!",
-                    Object = usuarioBanco.Id
+                    Object = new LoginResponseViewModel()
+                    {
+                        UsuarioId = usuarioBanco.Id,
+                        UsuarioAcessos = usuarioBanco.Acessos
+                    }
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Usuarios - LogarUsuario - Erro ao tentar logar o usuário. Exception: {ex}");
-                return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao logar o usuário. Request obj: {usuarioRequest}");
+                return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status500InternalServerError, $"Erro ao logar o usuário. Request obj: {usuarioRequest}");
             }
         }
 
-        public async Task<MensagemBase<int>> AlterarSenha(AlteracaoSenhaViewModel model)
+        private MensagemBase<LoginResponseViewModel> ValidacaoUsuario(UsuarioDto usuarioBanco, string usuarioRequestSenha)
+        {
+            if (usuarioBanco == null)
+                return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status404NotFound, "Usuário inexistente.");
+
+            if (usuarioBanco.Senha != usuarioRequestSenha)
+                return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status400BadRequest, "Senha incorreta.");
+
+            if (!usuarioBanco.Ativo)
+                return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status400BadRequest, "Usuário inativo.");
+
+            return new MensagemBase<LoginResponseViewModel> { Object =  new LoginResponseViewModel()};
+        }
+
+        public async Task<MensagemBase<LoginResponseViewModel>> AlterarSenha(AlteracaoSenhaViewModel model)
         {
             try
             {
-                var usuarioBanco = await _repository.BuscarUsuario("", model.UsuarioId);
+                var usuarioBanco = await _repository.BuscarUsuarioCompleto(model.UsuarioId);
 
-                if (usuarioBanco == null)
-                    return new MensagemBase<int>(StatusCodes.Status404NotFound, "Usuário inexistente.");
-
-                if (usuarioBanco.Senha != model.SenhaAtual)
-                    return new MensagemBase<int>(StatusCodes.Status400BadRequest, "Senha incorreta.");
+                var validacaoUsuario = ValidacaoUsuario(usuarioBanco, model.SenhaAtual);
+                
+                if (validacaoUsuario.Object == null) return validacaoUsuario;
 
                 var sucesso = await _repository.AlterarSenha(model);
 
                 if (!sucesso)
-                    return new MensagemBase<int>(StatusCodes.Status500InternalServerError, "Ocorreu um erro na alteração de senha. Por favor, tente novamente.");
+                    return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status500InternalServerError, "Ocorreu um erro na alteração de senha. Por favor, tente novamente.");
 
-                return new MensagemBase<int>()
+                return new MensagemBase<LoginResponseViewModel>()
                 {
                     StatusCode = StatusCodes.Status200OK,
                     Message = "Senha alterada com sucesso!",
-                    Object = usuarioBanco.Id
+                    Object = new LoginResponseViewModel()
+                    {
+                        UsuarioId = usuarioBanco.Id,
+                        UsuarioAcessos = usuarioBanco.Acessos
+                    }
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Usuarios - AlterarSenha - Erro ao tentar alterar senha. Exception: {ex}");
-                return new MensagemBase<int>(StatusCodes.Status500InternalServerError, $"Erro ao alterar a senha. Model: {model}");
+                return new MensagemBase<LoginResponseViewModel>(StatusCodes.Status500InternalServerError, $"Erro ao alterar a senha. Model: {model}");
             }
         }
 

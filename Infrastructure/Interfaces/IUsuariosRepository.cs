@@ -7,6 +7,7 @@ namespace Infrastructure.Interfaces
     {
         Task<UsuarioDto> BuscarUsuario(string username, int usuarioId);
         Task<UsuarioDto> BuscarUsuarioCompleto(int usuarioId);
+        Task<UsuarioDto> BuscarUsuarioCompletoPorUsername(string username);
         Task<UsuarioSimplificadoDto> BuscaSimplificada();
         Task<int> CriarUsuario(UsuarioDto usuario);
         Task<List<AcessoDto>> BuscarAcessos();  
