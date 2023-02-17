@@ -1,5 +1,10 @@
 # Stoquei - API
 
-Integrated with the [front-end](https://github.com/gustavenrique/stoquei)
+This repo is the API of [Stoquei](https://github.com/gustavenrique/stoquei), which is a stock management app. The purpose of this documentation is to show the back-end part as a whole.
 
-![image](https://user-images.githubusercontent.com/81171856/205335831-cdd13f85-b540-4f58-9c0b-9decb01ef8df.png)
+### Routes
+![image](https://user-images.githubusercontent.com/81171856/219518839-9361000a-506c-4fbe-ae08-fdc52b3f4768.png)
+![image](https://user-images.githubusercontent.com/81171856/219518895-28d48f56-d98e-4a41-bc4a-78a1a9afcb4d.png)
+
+### Database structures
+![stoquei diagram](https://user-images.githubusercontent.com/81171856/219518279-669f9001-fb11-45da-be2f-4a0319cf53a3.jpg)
