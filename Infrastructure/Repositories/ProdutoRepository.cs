@@ -61,7 +61,7 @@ namespace Infrastructure.Repositories
         public async Task<ProdutoDto> BuscarPorCodigoEan(string codigoEan)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@CodigoEan", codigoEan, DbType.Int32);
+            parameters.Add("@CodigoEan", codigoEan, DbType.String);
 
             var query = @"SELECT Id, Nome, CodigoEan, Preco, Fabricante, CategoriaId, EmEstoque AS Quantia FROM Produto WITH(NOLOCK) WHERE CodigoEan = @CodigoEan";
 

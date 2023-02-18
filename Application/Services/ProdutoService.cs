@@ -25,7 +25,7 @@ namespace Application.Services
                 var consultaSimplificada = await _repository.BuscarProdutosCompletos();
                 
                 if (consultaSimplificada.Produtos?.Any() == false)
-                    return new MensagemBase<ProdutoSimplificadoDto>(StatusCodes.Status404NotFound, "Não há produtos registrados.");
+                    return new MensagemBase<ProdutoSimplificadoDto>(StatusCodes.Status404NotFound, "Não há produtos registrados.", consultaSimplificada);
 
                 return new MensagemBase<ProdutoSimplificadoDto>(StatusCodes.Status200OK, "Produtos buscados com sucesso!", consultaSimplificada);
             }

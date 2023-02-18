@@ -30,7 +30,7 @@ namespace Application.Services
                 var buscaSimplificada = await _repository.BuscaSimplificada();
 
                 if (buscaSimplificada.Usuarios?.Any() != true)
-                    return new MensagemBase<UsuarioSimplificadoDto>(StatusCodes.Status404NotFound, "Não há usuários registrados.");
+                    return new MensagemBase<UsuarioSimplificadoDto>(StatusCodes.Status404NotFound, "Não há usuários registrados.", buscaSimplificada);
 
                 return new MensagemBase<UsuarioSimplificadoDto>(StatusCodes.Status200OK, "Usuários buscados com sucesso!", buscaSimplificada);
             }
