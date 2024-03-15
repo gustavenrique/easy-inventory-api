@@ -1,0 +1,15 @@
+[ ] Add Directory.Build.props with SonarAnalyzer
+[ ] Add .editorconfig
+[ ] Use Docker and Docker Compose
+[ ] Create tests
+[ ] Use user secrets with Azure Key Vault
+[ ] Add logging with Serilog + Elasticsearch
+[ ] Add versioning
+[ ] Add health check
+[ ] Collect metrics with Prometheus
+[ ] MIgrate to dotnet 8
+[ ] Create logging middleware/filter
+[ ] Create global exception handler
+[ ] Use OneOf library along with Result pattern
+[ ] Use vertical slice architecture
+[ ] Stop misusing DTOs and ViewModels
